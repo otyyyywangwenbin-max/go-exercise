@@ -157,7 +157,7 @@ func node2Svc(svcNode *etcd.Node) (*k8sSvc, error) {
 
 func writeToRedis(redisClient *redis.Client, c chan *k8sSvc) {
 	for {
-		k8sSvc := *<-c
+		k8sSvc := <-c
 		go func() {
 			if k8sSvc.Deleted {
 				for _, portName := range strings.Split(args.portNames, ",") {
