@@ -46,11 +46,9 @@ type argsT struct {
 	pprofAddr          string
 }
 
-var args argsT
+var args = argsT{}
 
 func init() {
-	args = argsT{}
-
 	/* parse command line arguments */
 	flag.StringVar(&args.etcdEndpoints, "etcd_endpoints", "", "etcd endpoints, e.g. 'http://ip:2379,http://ip:2379'")
 	flag.StringVar(&args.redisAddr, "redis_addr", "", "redis address, e.g. 'ip:port' ")
