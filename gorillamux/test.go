@@ -9,19 +9,19 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func IndexHandler(w http.ResponseWriter, r *http.Request) {
+func indexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Gorilla!\n"))
 }
 
 func main() {
 	var dir string
-	flag.StringVar(&dir, "dir", "/Users/wangwb/workspaces/private/gits/golang/go/doc", "the directory to serve files from. Defaults to temp dir")
+	flag.StringVar(&dir, "dir", "/z_tmp/", "the directory to serve files from. Defaults to temp dir")
 	flag.Parse()
 
 	r := mux.NewRouter()
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(dir))))
-	r.HandleFunc("/", IndexHandler)
-	r.HandleFunc("/index", IndexHandler)
+	r.HandleFunc("/", indexHandler)
+	r.HandleFunc("/index", indexHandler)
 
 	srv := &http.Server{
 		Handler:      r,

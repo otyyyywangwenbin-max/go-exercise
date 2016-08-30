@@ -1,0 +1,44 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug_sync",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "remotePath": "",
+            "port": 2345,
+            "host": "127.0.0.1",
+            "program": "${workspaceRoot}/k8sopenresty",
+            "env": {},
+            "args": [
+                      "-etcd_endpoints", "http://10.15.15.180:2379",
+                      "-redis_addr", "10.15.15.181:33055"
+                    ]
+        },
+        {
+            "name": "Debug_hello",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "remotePath": "",
+            "port": 2345,
+            "host": "127.0.0.1",
+            "program": "${workspaceRoot}/hello",
+            "env": {},
+            "args": []
+        },
+        {
+            "name": "Debug_mux",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "remotePath": "",
+            "port": 2345,
+            "host": "127.0.0.1",
+            "program": "${workspaceRoot}/gorillamux",
+            "env": {},
+            "args": []
+        }
+    ]
+}
