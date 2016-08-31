@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"net/http"
 	_ "net/http/pprof"
 	"os"
@@ -58,6 +59,7 @@ func init() {
 	flag.StringVar(&args.pprofAddr, "pprof_addr", ":6060", "pprof address, e.g. 'ip:port'")
 	flag.Parse()
 	args.nodeRootPath = "/registry/services/specs"
+	fmt.Printf("--- args ---\n%#v\n------\n", args)
 }
 
 func main() {
@@ -66,7 +68,7 @@ func main() {
 		log.Println(http.ListenAndServe(args.pprofAddr, nil))
 	}()
 
-	c := make(chan *k8sSvc)
+	c := make(chan *k8sSvc, 100)
 
 	/* start redis  */
 	redisClient := redis.NewClient(&redis.Options{
