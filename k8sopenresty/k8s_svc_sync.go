@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"net/http"
 	_ "net/http/pprof"
 	"os"
@@ -59,7 +58,7 @@ func init() {
 	flag.StringVar(&args.pprofAddr, "pprof_addr", ":6060", "pprof address, e.g. 'ip:port'")
 	flag.Parse()
 	args.nodeRootPath = "/registry/services/specs"
-	fmt.Printf("--- args ---\n%#v\n------\n", args)
+	log.Printf("\n--- args ---\n%#v\n------\n", args)
 }
 
 func main() {
@@ -108,8 +107,12 @@ func readFromEtcd(kapi etcd.KeysAPI, c chan *k8sSvc) {
 					for _, svcNode := range rsp.Node.Nodes {
 						if k8sSvc, err := node2Svc(svcNode); err == nil {
 							c <- k8sSvc
+						} else {
+							log.Fatal(err)
 						}
 					}
+				} else {
+					log.Fatal(err)
 				}
 			}(nsNode)
 		}
@@ -133,10 +136,14 @@ func watchFromEtcd(kapi etcd.KeysAPI, c chan *k8sSvc) {
 				if k8sSvc, err := node2Svc(rsp.Node); err == nil {
 					k8sSvc.Deleted = true
 					c <- k8sSvc
+				} else {
+					log.Fatal(err)
 				}
 			} else if rsp.Action == "create" || rsp.Action == "update" {
 				if k8sSvc, err := node2Svc(rsp.Node); err == nil {
 					c <- k8sSvc
+				} else {
+					log.Fatal(err)
 				}
 			}
 		}()
@@ -164,6 +171,8 @@ func writeToRedis(redisClient *redis.Client, c chan *k8sSvc) {
 					key := portName + "." + k8sSvc.Name + "." + k8sSvc.Namespace + "." + args.publicDomainSuffix
 					if err := redisClient.Del(key).Err(); err == nil {
 						log.Printf("Del key %s \n", key)
+					} else {
+						log.Fatal(err)
 					}
 				}
 				return
@@ -176,6 +185,8 @@ func writeToRedis(redisClient *redis.Client, c chan *k8sSvc) {
 						if redisClient.Get(key).Val() != val {
 							if err := redisClient.Set(key, val, 0).Err(); err == nil {
 								log.Printf("Set key %s, val %s \n", key, val)
+							} else {
+								log.Fatal(err)
 							}
 						} else {
 							log.Printf("Existed key %s \n", key)
