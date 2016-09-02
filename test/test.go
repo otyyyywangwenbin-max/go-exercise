@@ -6,6 +6,7 @@ import (
 	"unsafe"
 
 	_ "github.com/otyyyywangwenbin/go-exercise/test/pkg1" // for invoke pkg1/sub1.init()
+	"github.com/otyyyywangwenbin/go-exercise/test/pkg2"   // invoke all pkg2.init()
 )
 
 type aT struct {
@@ -81,6 +82,7 @@ func testLoopChan() {
 }
 
 func main() {
+	fmt.Println("begin main")
 	/*
 		fmt.Println(runtime.NumCPU())
 		fmt.Println(runtime.GOMAXPROCS())
@@ -95,6 +97,10 @@ func main() {
 		time.Sleep(5 * time.Second)
 		fmt.Println("end")
 	*/
+
 	testLoopChan()
+
+	pkg2.Method1()
+	pkg2.Method2()
 
 }

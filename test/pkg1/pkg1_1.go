@@ -7,5 +7,5 @@ import (
 )
 
 func init() {
-	fmt.Println("pkg1")
+	fmt.Println("pkg1_1")
 }
