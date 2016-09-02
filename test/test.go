@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 	"unsafe"
+
+	_ "github.com/otyyyywangwenbin/go-exercise/test/pkg1" // for invoke pkg1/sub1.init()
 )
 
 type aT struct {
