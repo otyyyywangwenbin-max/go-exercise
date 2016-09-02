@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"runtime"
+	"time"
+	"unsafe"
 )
 
 type aT struct {
@@ -40,19 +41,39 @@ func testClosure() {
 }
 
 func test(c chan *aT) {
+	//c <- &aT{}
+	fmt.Println(unsafe.Sizeof(c))
 	fmt.Printf("----> %#v\n", c)
 	fmt.Println("xxxxxxxx", <-c)
 }
 
 func test2(c <-chan *aT) {
+	//c <- &aT{}
 	fmt.Printf("----> %#v\n", c)
 	fmt.Println("xxxxxxxx", <-c)
 }
 
+func testForever() {
+	run := func() {
+		fmt.Println("------------->>>")
+		select {}
+	}
+
+	run()
+	fmt.Println("|||||||||||")
+}
+
 func main() {
-	fmt.Println(runtime.NumCPU())
-	//fmt.Println(runtime.GOMAXPROCS())
-	fmt.Println(runtime.GOMAXPROCS(1))
-	//fmt.Println(runtime.GOMAXPROCS(2))
-	testClosure()
+	/*
+		fmt.Println(runtime.NumCPU())
+		fmt.Println(runtime.GOMAXPROCS())
+		fmt.Println(runtime.GOMAXPROCS(1))
+		fmt.Println(runtime.GOMAXPROCS(2))
+	*/
+	//testClosure()
+	go testForever()
+	fmt.Println("begin")
+	time.Sleep(5 * time.Second)
+	fmt.Println("end")
+
 }
