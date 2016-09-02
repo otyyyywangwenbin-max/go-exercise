@@ -41,7 +41,7 @@ func testClosure() {
 }
 
 func test(c chan *aT) {
-	//c <- &aT{}
+
 	fmt.Println(unsafe.Sizeof(c))
 	fmt.Printf("----> %#v\n", c)
 	fmt.Println("xxxxxxxx", <-c)
@@ -53,14 +53,29 @@ func test2(c <-chan *aT) {
 	fmt.Println("xxxxxxxx", <-c)
 }
 
-func testForever() {
-	run := func() {
+func testSelectBlocked() {
+	run := func(_ <-chan struct{}) {
 		fmt.Println("------------->>>")
-		select {}
+		select {} //blocked
 	}
 
-	run()
+	run(nil)
 	fmt.Println("|||||||||||")
+}
+
+func testLoopChan() {
+	c := make(chan int)
+	run := func(c <-chan int) {
+		for {
+			v := <-c
+			fmt.Println("value: ", v)
+		}
+	}
+
+	go run(c)
+	time.Sleep(10 * time.Second)
+	c <- 1
+	time.Sleep(1 * time.Second)
 }
 
 func main() {
@@ -71,9 +86,13 @@ func main() {
 		fmt.Println(runtime.GOMAXPROCS(2))
 	*/
 	//testClosure()
-	go testForever()
-	fmt.Println("begin")
-	time.Sleep(5 * time.Second)
-	fmt.Println("end")
+
+	/*
+		go testSelectBlocked()
+		fmt.Println("begin")
+		time.Sleep(5 * time.Second)
+		fmt.Println("end")
+	*/
+	testLoopChan()
 
 }
