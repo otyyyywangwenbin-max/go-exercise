@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"reflect"
 	"time"
 	"unsafe"
 
 	_ "github.com/otyyyywangwenbin/go-exercise/test/pkg1" // for invoke pkg1/sub1.init()
 	"github.com/otyyyywangwenbin/go-exercise/test/pkg2"   // invoke all pkg2.init()
+	"golang.org/x/tools/go/loader"
 )
 
 type aT struct {
@@ -81,6 +83,39 @@ func testLoopChan() {
 	time.Sleep(1 * time.Second)
 }
 
+func testDynamicLoader() {
+	fmt.Println("testDynamicLoader")
+	var conf loader.Config
+	conf.Import("github.com/otyyyywangwenbin/go-exercise/test/dynamicpkg1")
+	if prog, err := conf.Load(); err != nil {
+		fmt.Println(err)
+	} else {
+		//fmt.Println(prog)
+		for _, pkgInfo := range prog.InitialPackages() {
+			// reflect.
+			// vc := reflect.New(pkgInfo.Pkg.Name)
+			fmt.Println("-------", pkgInfo.Pkg.Name())
+			for key, val := range pkgInfo.Types {
+				fmt.Println("-------> key: ", key, ", value: ", val)
+			}
+			fmt.Println("============")
+			fmt.Println(reflect.TypeOf(testLoopChan))
+			for key, val := range pkgInfo.Defs {
+				fmt.Println("-------> key: ", key, ", value: ", reflect.TypeOf(val))
+
+				// if key.Name == "init" {
+				// 	if obj, ok := val.(*types.Func); ok {
+				// 		reflect.ValueOf(*obj).Call(make([]reflect.Value, 0))
+				// 		fmt.Println(obj.Pos())
+				// 		fmt.Println("xxxxxxxx:", obj)
+				// 	}
+				// }
+			}
+		}
+
+	}
+}
+
 func main() {
 	fmt.Println("begin main")
 	/*
@@ -98,9 +133,11 @@ func main() {
 		fmt.Println("end")
 	*/
 
-	testLoopChan()
+	//testLoopChan()
 
 	pkg2.Method1()
 	pkg2.Method2()
+
+	testDynamicLoader()
 
 }
